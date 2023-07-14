@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+</head>
+<body>
+    <div id="chatBox" style="height: 300px; border: 1px solid black; padding: 10px; overflow: auto;"></div>
+    <button onclick="sendData()">Send call quality data</button>
+    <br><br><input id="userInput" type="text" style="width: 300px;" placeholder="Type your message..." onkeydown="handleKeyPress(event)">
+    <button onclick="sendMessage()">Send message</button>
+    <br><br>
+    <!-- Added button for joining the call -->
+    <button id="joinCall">Join Call</button>
+
+    <!-- Added button for leaving the call -->
+    <button id="leaveCall">Leave Call</button>
+    <br><br>
+    <!-- Added button for turning camera on -->
+    <button id="cameraOn">Camera On</button>
+
+    <!-- Added button for turning microphone on -->
+    <button id="microphoneOn">Microphone On</button>   
+
+    <!-- Added button for turning camera on -->
+    <button id="cameraOff">Camera Off</button>
+
+    <!-- Added button for turning microphone on -->
+    <button id="microphoneOff">Microphone Off</button>
+
+    <br><br>
+    <!-- Device select -->
+    <select id="video-devices"></select>
+    <select id="audio-devices"></select>
+
+    <script>
+    function handleKeyPress(event) {
+        if (event.keyCode === 13) { // 13 represents the Enter key
+            event.preventDefault(); // Prevent the default form submission
+            sendMessage(); // Call the function to send the message
+        }
+        }
+
+    function sendMessage() {
+        // Your code to send the message goes here
+        console.log('Message sent!');
+    }
+
+    function sendData() {
+        // Your code to send the message goes here
+        console.log('CQ data sent!');
+    }
+    document.getElementById("video-devices").addEventListener('change', window.changeVideoDevice);
+    document.getElementById("audio-devices").addEventListener('change', window.changeAudioDevice);
+    </script>
+        
+
+
+    <!-- Added divs for videos and audios -->
+    <div id="videos"></div>
+    <div id="audios"></div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput");
+            const chatBox = document.getElementById("chatBox");
+
+            const userMessage = userInput.value;
+            userInput.value = "";
+
+            chatBox.innerHTML += `<p><b>You:</b> ${userMessage}</p>`;
+
+            const response = await fetch(`/api/response?userQuery=${encodeURIComponent(userMessage)}`);
+            const assistantMessage = await response.text();
+
+            chatBox.innerHTML += `<p><b>Assistant:</b> ${assistantMessage}</p>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendData() {
+            const chatBox = document.getElementById("chatBox");
+
+            chatBox.innerHTML += `<p><b>You:</b> Call quality data sent</p>`;
+
+            const response = await fetch(`/api/dataResponse`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(window.rtcstats.batchArray), // Send batchArray data to the server
+            });
+            const assistantMessage = await response.text();
+
+            chatBox.innerHTML += `<p><b>Assistant:</b> ${assistantMessage}</p>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+    <script src="/daily.bundle.js"></script>
+</body>
+</html>
