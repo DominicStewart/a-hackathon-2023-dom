@@ -38,6 +38,7 @@ export default function rtcStats() {
         "bytesSent",
         "byesReceived",
         "packetsSent",
+        "packetsLost",
         "packetsReceived",
         "frameHeight",
         "frameWidth",
@@ -69,7 +70,7 @@ export default function rtcStats() {
         "audioLevel",
         "totalAudioEnergy",
         "totalSamplesDuration",
-        "RoundTripTime",
+        "roundTripTime",
       ],
     };
 

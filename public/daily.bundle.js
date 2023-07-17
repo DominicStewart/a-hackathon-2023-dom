@@ -165,7 +165,7 @@ function rtcStats() {
     var _filter = {
       types: ["outbound-rtp", "remote-inbound-rtp", "inbound-rtp", "media-source", "track"],
       kinds: ["video", "audio"],
-      props: ["id", "type", "kind", "bytesSent", "byesReceived", "packetsSent", "packetsReceived", "frameHeight", "frameWidth", "framesEncoded", "framesDecoded", "framesPerSecond", "framesSent", "framesReceived", "keyFramesEncoded", "keyFramesDecoded", "mid", "qualityLimitationDurations", "qualityLimitationReason", "qualityLimitationResolutionChanges", "rid", "pauseCount", "freezeCount", "jitter", "totalAudioEnergy", "jitterBufferDelay", "totalPauseDuration", "totalFreezeDuration", "jitterBufferEmittedCount", "totalSamplesReceived", "concealedSamples", "silentConcealedSamples", "insertedSamplesForDeceleration", "removedSamplesForAcceleration", "audioLevel", "totalAudioEnergy", "totalSamplesDuration", "RoundTripTime"]
+      props: ["id", "type", "kind", "bytesSent", "byesReceived", "packetsSent", "packetsLost", "packetsReceived", "frameHeight", "frameWidth", "framesEncoded", "framesDecoded", "framesPerSecond", "framesSent", "framesReceived", "keyFramesEncoded", "keyFramesDecoded", "mid", "qualityLimitationDurations", "qualityLimitationReason", "qualityLimitationResolutionChanges", "rid", "pauseCount", "freezeCount", "jitter", "totalAudioEnergy", "jitterBufferDelay", "totalPauseDuration", "totalFreezeDuration", "jitterBufferEmittedCount", "totalSamplesReceived", "concealedSamples", "silentConcealedSamples", "insertedSamplesForDeceleration", "removedSamplesForAcceleration", "audioLevel", "totalAudioEnergy", "totalSamplesDuration", "roundTripTime"]
     };
     var pcArray = [];
     batchArray = [];
@@ -7428,7 +7428,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52247" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49812" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
