@@ -18391,29 +18391,37 @@ const avgType = {};
 
 const slicedJson = jsonExample.slice(0, n);
 console.log("slicedJson", slicedJson);
-
 for (const sublist of slicedJson) {
+    //console.log("sublist", sublist)
   for (const item of sublist) {
+    //console.log("item", item);
     const type = item.type;
+    //console.log("type", type)
     const propertiesAvg = propertyMapAvg[type];
+    //console.log("propertiesAvg", propertiesAvg)
     const propertiesLast = propertyMapLastValue[type];
-
-    if (propertiesAvg) {
+   /* if (propertiesAvg) {
+        //console.log("propertiesAvg", propertiesAvg)
       for (const property of propertiesAvg) {
+        //console.log("property", property)
         if (item.hasOwnProperty(property)) {
           framesSum[property] = framesSum[property] || {};
+          //console.log("framesum", framesSum);
+          //console.log("framesSum property", framesSum[property]);
           framesSum[property][item.id] = (framesSum[property][item.id] || 0) + item[property];
           framesCount[property] = framesCount[property] || {};
           framesCount[property][item.id] = (framesCount[property][item.id] || 0) + 1;
+          //console.log("avgType", avgType)
           avgType[property] = type;
         }
       }
-    }
-
+    }*/
+    console.log("avgtypes", avgType)
     if (propertiesLast) {
       for (const property of propertiesLast) {
         if (item.hasOwnProperty(property)) {
           framesSum[property] = framesSum[property] || {};
+          //console.log("framesSum property", framesSum[property])
           framesSum[property][item.id] = item[property];
           framesCount[property] = framesCount[property] || {};
           framesCount[property][item.id] = 1;
@@ -18430,6 +18438,8 @@ for (const property in framesSum) {
   const totalFrames = framesSum[property];
   const count = framesCount[property];
   const itemType = avgType[property];
+  
+  //console.log("itemType", itemType)
   averageFrames[itemType] = averageFrames[itemType] || {};
   averageFrames[itemType][property] = {};
 
