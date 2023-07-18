@@ -18361,20 +18361,13 @@ const jsonExample = [
     ],
   ];
   
-  //const propertyMapAvg = {
-  //  'inbound-rtp': ['packetsLost', 'framesDecoded', 'framesReceived', 'keyFramesDecoded', 'bytesReceived', 'packetsReceived', 'jitterBufferDelay', 'jitterBufferEmittedCount', 'totalSamplesReceived', 'concealedSamples', 'silentConcealedSamples', 'insertedSamplesForDeceleration', 'removedSamplesForAcceleration', 'totalSamplesDuration', 'totalAudioEnergy', 'audioLevel', 'pauseCount', 'freezeCount', 'totalFreezesDuration', 'totalPausesDuration', 'framesPerSecond', 'frameHeight', 'frameWidth'],
-  //  'outbound-rtp': ['packetsLost', 'framesEncoded', 'framesSent', 'keyFramesEncoded', 'packetsSent', 'bytesSent', 'qualityLimitationDurations', 'framesPerSecond', 'frameHeight', 'frameWidth', 'audioLevel'],
-  //  'remote-inbound-rtp': ['packetsLost'],
-  // Add more mappings as needed
-  //};
-  
-  const n = 1;
-  
   const propertyMapAvg = {
-    "inbound-rtp": ["frameHeight", "frameWidth"],
-    "outbound-rtp": ["frameHeight", "frameWidth"],
-    // Add more mappings as needed
+    'inbound-rtp': ['packetsLost', 'framesDecoded', 'framesReceived', 'keyFramesDecoded', 'bytesReceived', 'packetsReceived', 'jitterBufferDelay', 'jitterBufferEmittedCount', 'totalSamplesReceived', 'concealedSamples', 'silentConcealedSamples', 'insertedSamplesForDeceleration', 'removedSamplesForAcceleration', 'totalSamplesDuration', 'totalAudioEnergy', 'audioLevel', 'pauseCount', 'freezeCount', 'totalFreezesDuration', 'totalPausesDuration', 'framesPerSecond', 'frameHeight', 'frameWidth'],
+    'outbound-rtp': ['packetsLost', 'framesEncoded', 'framesSent', 'keyFramesEncoded', 'packetsSent', 'bytesSent', 'qualityLimitationDurations', 'framesPerSecond', 'frameHeight', 'frameWidth', 'audioLevel'],
+    'remote-inbound-rtp': ['packetsLost'],
   };
+  
+  const n = 5;
   
   const propertyMapLastValue = {
     "inbound-rtp": ["jitter"],
@@ -18384,9 +18377,9 @@ const jsonExample = [
   
   const idFilterValue = ["IT01V1234"];
   
-  let framesSum = {};
-  let framesCount = {};
-  let avgType = {};
+  let valueSum = {};
+  let valueCount = {};
+  let lastValues = {};
   
   const slicedJson = jsonExample.slice(0, n);
   console.log("slicedJson", slicedJson);
@@ -18395,99 +18388,86 @@ const jsonExample = [
     for (const item of sublist) {
       const propertiesAvg = propertyMapAvg[item.type];
       const propertiesLast = propertyMapLastValue[item.type];
+  
       if (propertiesAvg) {
         for (const property of propertiesAvg) {
           if (item.hasOwnProperty(property)) {
-            framesSum = {
-              ...framesSum,
-              [item.type]: {
-                ...framesSum?.[item.type],
-                [property]: {
-                  ...framesSum?.[item.type]?.[property],
-                  [item.id]: item[property],
-                },
-              },
-            };
-            framesCount = {
-              ...framesCount,
-              [item.type]: {
-                ...framesCount?.[item.type],
-                [property]: {
-                  ...framesCount?.[item.type]?.[property],
-                  [item.id]:
-                    (framesCount?.[item.type]?.[property]?.[item.id] ?? 0) + 1,
-                },
-              },
-            };
-            avgType[property] = item.type;
+            if (!valueSum[item.type]) {
+              valueSum[item.type] = {};
+              valueCount[item.type] = {};
+            }
+            if (!valueSum[item.type][property]) {
+              valueSum[item.type][property] = {};
+              valueCount[item.type][property] = {};
+            }
+            if (!valueSum[item.type][property][item.id]) {
+              valueSum[item.type][property][item.id] = 0;
+              valueCount[item.type][property][item.id] = 0;
+            }
+  
+            valueSum[item.type][property][item.id] += item[property];
+            valueCount[item.type][property][item.id] += 1;
           }
         }
       }
       if (propertiesLast) {
         for (const property of propertiesLast) {
           if (item.hasOwnProperty(property)) {
-            framesSum = {
-              ...framesSum,
-              [item.type]: {
-                ...framesSum?.[item.type],
-                [property]: {
-                  ...framesSum?.[item.type]?.[property],
-                  [item.id]: item[property],
-                },
-              },
-            };
-            framesCount = {
-              ...framesCount,
-              [item.type]: {
-                ...framesCount?.[item.type],
-                [property]: {
-                  ...framesCount?.[item.type]?.[property],
-                  [item.id]:
-                    (framesCount?.[item.type]?.[property]?.[item.id] ?? 0) + 1,
-                },
-              },
-            };
-            avgType[property] = item.type;
+            if (!lastValues[item.type]) {
+              lastValues[item.type] = {};
+            }
+            if (!lastValues[item.type][property]) {
+              lastValues[item.type][property] = {};
+            }
+            lastValues[item.type][property][item.id] = item[property];
           }
         }
       }
     }
   }
   
-  let averageFrames = {};
+  let averageValues = {};
   
-  for (const type in framesSum) {
-    for (const property in framesSum[type]) {
-      const totalFrames = framesSum[type][property];
-      const count = framesCount[type][property];
+  for (const type in valueSum) {
+    for (const property in valueSum[type]) {
+      const totalValues = valueSum[type][property];
+      const count = valueCount[type][property];
   
-      averageFrames = {
-        ...averageFrames,
-        [type]: {
-          ...averageFrames?.[type],
-          [property]: {},
-        },
+      averageValues[type] = {
+        ...averageValues[type],
+        [property]: {},
       };
   
-      for (const id in totalFrames) {
-        averageFrames[type][property][id] = totalFrames[id] / count[id];
+      for (const id in totalValues) {
+        averageValues[type][property][id] = totalValues[id] / count[id];
       }
     }
   }
   
+  // Add last values
+  for (const type in lastValues) {
+    for (const property in lastValues[type]) {
+      const lastValue = lastValues[type][property];
+  
+      averageValues[type] = {
+        ...averageValues[type],
+        [property]: lastValue,
+      };
+    }
+  }
+  
   // Filter out specific IDs
-  for (const type in averageFrames) {
-    for (const property in averageFrames[type]) {
-      for (const id in averageFrames[type][property]) {
+  for (const type in averageValues) {
+    for (const property in averageValues[type]) {
+      for (const id in averageValues[type][property]) {
         if (idFilterValue.includes(id)) {
-          delete averageFrames[type][property][id];
+          delete averageValues[type][property][id];
         }
       }
     }
   }
   
-  
-  const jsonTransform = averageFrames;
+  const jsonTransform = averageValues;
   const jsonFinal = jsonTransform;
   
   const jsonButton = document.getElementById("jsonButton");
