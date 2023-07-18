@@ -5,22 +5,36 @@ import Daily from "@daily-co/daily-js";
 
 console.log("Daily version: %s", Daily.version());
 
-const ROOM_URL = "https://bdom.staging.daily.co/switchover";
+const ROOM_URL = "https://bdom.staging.daily.co/sync";
 const dailyConfig = {
 };
 
+
 let callObject;
+
 
 async function initializeCallObject() {
   callObject = Daily.createCallObject({
     subscribeToTracksAutomatically: true,
     dailyConfig
   });
+
   await fillVideoDevicesDropDown();
   await fillAudioDevicesDropDown();
 }
 
+
 initializeCallObject();
+
+// Event listeners
+callObject.once("joined-meeting", meetingJoined);
+callObject.on("track-started", startTrack);
+callObject.on("track-stopped", stopTrack);
+callObject.on("participant-joined", participantJoined);
+callObject.on("participant-updated", updateParticipant);
+callObject.on("camera-error", cameraError);
+
+window.callObject = callObject;
 
 function createAndJoin() {
   callObject.join({
@@ -173,13 +187,7 @@ function updateParticipant(evt) {
 
 
 
-// Event listeners
-  callObject.once("joined-meeting", meetingJoined);
-  callObject.on("track-started", startTrack);
-  callObject.on("track-stopped", stopTrack);
-  callObject.on("participant-joined", participantJoined);
-  callObject.on("participant-updated", updateParticipant);
-  callObject.on("camera-error", cameraError);
+
 
 document.addEventListener('DOMContentLoaded', (event) => {
   const joinButton = document.getElementById('joinCall');
