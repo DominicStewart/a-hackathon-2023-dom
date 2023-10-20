@@ -6,8 +6,7 @@ import Daily from "@daily-co/daily-js";
 console.log("Daily version: %s", Daily.version());
 
 const ROOM_URL = "https://bdom.staging.daily.co/sync";
-const dailyConfig = {
-};
+
 
 
 let callObject;
@@ -16,7 +15,6 @@ let callObject;
 async function initializeCallObject() {
   callObject = Daily.createCallObject({
     subscribeToTracksAutomatically: true,
-    dailyConfig
   });
 
   await fillVideoDevicesDropDown();

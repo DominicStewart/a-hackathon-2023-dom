@@ -7116,8 +7116,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 console.log("Daily version: %s", _dailyJs.default.version());
-var ROOM_URL = "https://bdom.staging.daily.co/switchover";
-var dailyConfig = {};
+var ROOM_URL = "https://bdom.staging.daily.co/sync";
 var callObject;
 function initializeCallObject() {
   return _initializeCallObject.apply(this, arguments);
@@ -7128,8 +7127,7 @@ function _initializeCallObject() {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           callObject = _dailyJs.default.createCallObject({
-            subscribeToTracksAutomatically: true,
-            dailyConfig: dailyConfig
+            subscribeToTracksAutomatically: true
           });
           _context3.next = 3;
           return fillVideoDevicesDropDown();
@@ -7145,6 +7143,15 @@ function _initializeCallObject() {
   return _initializeCallObject.apply(this, arguments);
 }
 initializeCallObject();
+
+// Event listeners
+callObject.once("joined-meeting", meetingJoined);
+callObject.on("track-started", startTrack);
+callObject.on("track-stopped", stopTrack);
+callObject.on("participant-joined", participantJoined);
+callObject.on("participant-updated", updateParticipant);
+callObject.on("camera-error", cameraError);
+window.callObject = callObject;
 function createAndJoin() {
   callObject.join({
     url: ROOM_URL
@@ -7389,14 +7396,6 @@ function participantJoined(evt) {
 function updateParticipant(evt) {
   console.log("Participant updated: ", evt);
 }
-
-// Event listeners
-callObject.once("joined-meeting", meetingJoined);
-callObject.on("track-started", startTrack);
-callObject.on("track-stopped", stopTrack);
-callObject.on("participant-joined", participantJoined);
-callObject.on("participant-updated", updateParticipant);
-callObject.on("camera-error", cameraError);
 document.addEventListener('DOMContentLoaded', function (event) {
   var joinButton = document.getElementById('joinCall');
   joinButton.addEventListener('click', createAndJoin);
@@ -7440,7 +7439,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56100" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55518" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
